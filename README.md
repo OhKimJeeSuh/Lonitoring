@@ -1,53 +1,71 @@
 # 🖨️Lonitoring
 
+<br>
+
 ## 목차
-**1. 프로젝트 개요**  
-**2. 팀원소개**  
-**3. 개발 환경**   
-**4. 주요 기능**  
+**1. 📬 프로젝트 개요**  
+**2. 🎓 팀원소개**  
+**3. ⚙️ 개발 환경**   
+**4. 🌟 주요 기능**  
 　      **4-1.** 서버 리소스 모니터링  
 　      **4-2.** 보안 이벤트 모니터링  
 　      **4-3.** cron 활용  
-**5. 실행**  
+**5. 🖥️ 실행**  
 　      **5-1.** 서버 리소스  
 　      **5-2.** Login Failed
 　      **5-3.** 결과 화면면
 **6. 💣 트러블 슈팅**  
 **7. 🕯️고찰**  
-<br><br><br>
+<br><br>
 
 
-## 1. 프로젝트 개요
+## 1. 📬 프로젝트 개요
 >  이 프로젝트는 서버의 리소스 사용량 및 보안 이벤트를 수집, 저장하여 인프라를 효율적으로 관리하는 시스템을 구축하는 것을 목표로 한다. 리소스는 CPU, 메모리, 디스크 사용량을, 보안 이벤트는 로그인 실패를 수집하며, cron을 활용해 일정 주기로 해당 데이터를 log로 기록하고 분석한다. 
  이를 통해 리눅스 명령어 및 시스템 관리 스킬을 학습하며, 서버의 성능 최적화 및 리눅스 시스템 관리  및 보안 운영에 대한 인사이트를 향상시키고, 로그 분석을 통한 문제 해결 역량을 강화하는 것을 목표로 한다.
 
-## 2. 팀원 소개
+<br><br>
 
-## 3. 개발 환경
+## 2. 🎓 팀원소개
+
+|<img src="https://avatars.githubusercontent.com/u/114637614?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/165532198?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/193404366?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/79669001?v=4" width="150" height="150"/>|
+|:-:|:-:|:-:|:-:|
+|오현두<br/>[@HyunDooBoo](https://github.com/HyunDooBoo)|김소연<br/>[@ssoyeonni](https://github.com/ssoyeonni)|지수근<br/>[@SuGeunJee](https://github.com/SuGeunJee)|서소원<br/>[@PleaseErwin](https://github.com/PleaseErwin)|
+
+<br><br>
+
+
+## 3. ⚙️ 개발 환경
 
 | 항목               | 상세 내용                |
 |--------------------|-------------------------|
 | **가상화 환경**    | VMware                  |
-| **VM 운영체제**    | Ubuntu 22.04.2 LTS      |
+| **VM 운영체제**    | Ubuntu 24.04.2 LTS      |
 | **원격 접속 도구** | MobaXterm               |
 | **스크립트 실행 환경** | Bash Shell           |
 | **로그 저장 위치** | `/var/log/` 디렉토리    |
 
+<br><br>
 
-## 4. 주요 기능
+## 4. 🌟 주요 기능
 ### 4-1. 서버 리소스 모니터링
 - CPU, 메모리, 디스크 사용량을 일정 주기로 기록
 - 리눅스 명령어: top, free, df 활용
+
+<br>
 
 ### 4-2. 보안 이벤트 모니터링
 - SSH 로그인 실패 기록
 - 리눅스 명령어: grep "Failed password”
 
+<br>
+
 ### 4-3. cron 활용
 - 1초 주기로 리소스 데이터를 수집하여 cpu_info.log에 저장
 - 1분 주기로 로그인 실패 기록을 auth.log에서 가져와 failed_login/현재 날짜.log에 저장
 
-## 5. 실행
+<br><br>
+
+## 5. 🖥️ 실행
 ### 5-1. 서버 리소스
 **리소스 사용량 저장 스크립트**
 > 1초에 한 번씩 CPU 사용량, CPU 코어 수, 메모리 사용량, CPU 부하, 디스크 사용량을 출력하여 저장하는 스크립트
@@ -103,6 +121,7 @@ done
 * * * * * /root/linux_practice/cpu_info.sh
 ```
 
+<br>
 
 ### 5-2. Login Failed
 **로그인 실패 저장 스크립트**
@@ -151,7 +170,7 @@ rm -f "$LOG_FILE.today" "$LOG_FILE.new"
 * * * * * /home/ubuntu/failed_login/failed_login_monitor.sh
 ```
 
-
+<br>
 
 ### 5-3. 결과 화면
 
@@ -165,7 +184,12 @@ rm -f "$LOG_FILE.today" "$LOG_FILE.new"
 - 추가된 로그 기록
   ![Image](https://github.com/user-attachments/assets/6b4e0901-a9a5-4a89-868e-ad9131b07434) <br>
 
+<br><br>
 
-## 6. 트러블 슈팅
+## 6. 💣 트러블 슈팅
 
-## 7. 고찰
+<br><br>
+
+## 7. 🕯️ 고찰
+
+<br><br>
