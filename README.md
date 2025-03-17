@@ -56,13 +56,13 @@
 
 ### 4-2. 보안 이벤트 모니터링
 - SSH 로그인 실패 기록
-- 리눅스 명령어: grep "Failed password”
+- 리눅스 명령어: grep "Failed password" /var/log/auth.log
 
 <br>
 
 ### 4-3. cron 활용
 - 1초 주기로 리소스 데이터를 수집하여 cpu_info.log에 저장
-- 1분 주기로 로그인 실패 기록을 auth.log에서 가져와 failed_login/현재 날짜.log에 저장
+- 1초 주기로 로그인 실패 기록을 auth.log에서 가져와 failed_login/현재 날짜.log에 저장
 
 <br><br>
 
@@ -218,37 +218,54 @@ done
 
 # 설정
 LOG_DIR="/home/ubuntu/failed_login"
-TODAY=$(date +%y%m%d)
-LOG_FILE="$LOG_DIR/$TODAY.log"
+MONITOR_LOG="$LOG_DIR/monitor.log"
+MAX_COUNT=60
+COUNT=0
 
 # 디렉토리가 없으면 생성
 mkdir -p "$LOG_DIR"
 
-# 오늘 날짜의 타임스탬프 패턴 (2025-03-18 형식)
-TODAY_DATE_PATTERN=$(date +"%Y-%m-%d")
+# 무한 루프로 1초마다 실행
+while [ $COUNT -lt $MAX_COUNT ]
+do
+  # 현재 날짜 설정
+  TODAY=$(date +%y%m%d)
+  LOG_FILE="$LOG_DIR/$TODAY.log"
 
-# auth.log에서 오늘 날짜의 Failed password 로그만 추출
-grep "Failed password" /var/log/auth.log | grep "$TODAY_DATE_PATTERN" > "$LOG_FILE.today"
+  # 오늘 날짜의 타임스탬프 패턴 (ex : 2025-03-18 형식)
+  TODAY_DATE_PATTERN=$(date +"%Y-%m-%d")
 
-# 현재 로그 파일이 있으면 중복 제거를 위해 비교
-if [ -f "$LOG_FILE" ]; then
-  # 새 로그에서 기존 로그에 없는 항목만 추출
-  comm -13 <(sort "$LOG_FILE") <(sort "$LOG_FILE.today") > "$LOG_FILE.new"
-else
-  # 파일이 없으면 모든 오늘 로그를 새 로그로 간주
-  cp "$LOG_FILE.today" "$LOG_FILE.new"
-fi
+  # auth.log에서 오늘 날짜의 Failed password 로그만 추출
+  grep "Failed password" /var/log/auth.log | grep "$TODAY_DATE_PATTERN" > "$LOG_FILE.today"
 
-# 새 로그가 있으면 추가
-if [ -s "$LOG_FILE.new" ]; then
-  cat "$LOG_FILE.new" >> "$LOG_FILE"
-  echo "$(date '+%Y-%m-%d %H:%M:%S') - 새 로그 $(wc -l < "$LOG_FILE.new")개 추가됨" >> "$LOG_DIR/monitor.log"
-else
-  echo "$(date '+%Y-%m-%d %H:%M:%S') - 새 로그 없음" >> "$LOG_DIR/monitor.log"
-fi
+  # 현재 로그 파일이 있으면 중복 제거를 위해 비교
+  if [ -f "$LOG_FILE" ]; then
+    # 새 로그에서 기존 로그에 없는 항목만 추출
+    comm -13 <(sort "$LOG_FILE") <(sort "$LOG_FILE.today") > "$LOG_FILE.new"
+  else
+    # 파일이 없으면 모든 오늘 로그를 새 로그로 간주
+    cp "$LOG_FILE.today" "$LOG_FILE.new"
+  fi
 
-# 임시 파일 정리
-rm -f "$LOG_FILE.today" "$LOG_FILE.new"
+  # 새 로그가 있으면 추가
+  if [ -s "$LOG_FILE.new" ]; then
+    cat "$LOG_FILE.new" >> "$LOG_FILE"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - 새 로그 $(wc -l < "$LOG_FILE.new")개 추가됨" >> "$MONITOR_LOG"
+
+    # 새 로그가 발견되면 콘솔에도 알림
+    echo "새 로그 발견: $(wc -l < "$LOG_FILE.new")개"
+  fi
+
+  # 임시 파일 정리
+  rm -f "$LOG_FILE.today" "$LOG_FILE.new"
+
+  # 1초 대기
+  sleep 1
+
+  # 반복 횟수 증가
+  COUNT=$((COUNT + 1))
+done
+
 ```
 
 **로그인 실패 기록 cron 설정**
