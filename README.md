@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/cc79d20a-66c8-46a3-a764-7c5cf8768c8a)# 🖨️Lonitoring
+# 🖨️Lonitoring
 
 ## 목차
 **1. 프로젝트 개요**  
