@@ -69,6 +69,8 @@
 ### 5-1. 서버 리소스
 **리소스 사용량 저장 스크립트**
 > 1초에 한 번씩 CPU 사용량, CPU 코어 수, 메모리 사용량, CPU 부하, 디스크 사용량을 출력하여 저장하는 스크립트
+![image](https://github.com/user-attachments/assets/39ae9fd0-2d30-4b0c-b324-eb8d80ccc3d0)
+
 
 
 ```
@@ -119,6 +121,83 @@ done
 **리소스 기록 cron 설정**
 ```
 * * * * * /root/linux_practice/cpu_info.sh
+```
+
+<br>
+
+### 5-2. CPU 사용량 감지 및 종료
+**CPU 사용량 감지 및 종료 스크립트**
+> 5초마다 CPU 사용량을 체크해 현재 사용량에 따른 메세지를 출력 및 80퍼 초과시 사용량이 가장 높은 프로그램 강제 종료하는 스크립트 <br>
+![image](https://github.com/user-attachments/assets/081e0161-1dc8-4969-9494-4fe7212e822c)
+
+
+```
+#!/bin/bash
+
+LOG_FILE="/var/log/cpu_usage_monitor.log"
+
+# CPU 사용량 임계값 (80%와 90%)
+CPU_NORMAL_THRESHOLD=70
+CPU_WARNING_THRESHOLD=70
+CPU_CRITICAL_THRESHOLD=90
+COUNT=0
+MAX_COUNT=11
+
+while [ $COUNT -lt $MAX_COUNT ];
+do
+    # 현재 CPU 사용량 (top 명령어로 추출)
+    CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
+
+    # CPU 사용량이 70% 미만일 때 알림
+    if (( $(echo "$CPU_USAGE <= $CPU_NORMAL_THRESHOLD" | bc -l) )); then
+        echo "$(date) - CPU 사용량이 정상적입니다." >> $LOG_FILE
+    fi
+
+    # CPU 사용량이 70% 초과일 때 경고
+    if (( $(echo "$CPU_USAGE > $CPU_WARNING_THRESHOLD" | bc -l) )); then
+        # 경고 메시지 출력 (80% 초과)
+        echo "$(date) - CPU 사용량이 $CPU_USAGE%를 초과했습니다! (경고)" >> $LOG_FILE
+        echo "" >> $LOG_FILE
+
+        # CPU를 많이 사용하는 프로그램 찾기 (상위 5개)
+        echo "$(date) - CPU를 많이 사용하는 프로그램:" >> $LOG_FILE
+        echo "" >> $LOG_FILE
+        ps aux --sort=-%cpu | head -n 6 >> $LOG_FILE
+    fi
+
+    # CPU 사용량이 80% 초과일 때 정말 위험 경고 및 종료 안내
+    if (( $(echo "$CPU_USAGE > $CPU_CRITICAL_THRESHOLD" | bc -l) )); then
+        # (90% 초과)
+        echo "$(date) - CPU 사용량이 $CPU_USAGE%를 초과했습니다!" >> $LOG_FILE
+        echo "" >> $LOG_FILE
+
+        # CPU를 많이 사용하는 프로그램 찾기 (상위 5개)
+        echo "$(date) - CPU를 많이 사용하는 프로그램:" >> $LOG_FILE
+        echo "" >> $LOG_FILE
+        ps aux --sort=-%cpu | head -n 6 >> $LOG_FILE
+
+        # 종료해야 할 프로세스를 추천하는 메시지
+        echo "$(date) - CPU 사용량을 많이 차지하는 프로그램을 종료하세요." >> $LOG_FILE
+        echo "" >> $LOG_FILE
+  
+        # 가장 많이 사용하는 프로그램 종료 (PID로 프로세스를 종료)
+        PID_TO_KILL=$(ps aux --sort=-%cpu | awk 'NR==2 {print $2}')  # 2번째로 CPU 많이 사용하는 프로세스의 PID
+        kill -9 $PID_TO_KILL
+        echo "$(date) - CPU를 많이 차지하는 프로세스($PID_TO_KILL)가 종료되었습니
+다." >> $LOG_FILE
+        echo "" >> $LOG_FILE
+    fi
+
+    # 5초 대기
+    sleep 5
+
+    #반복 횟수 증가
+    COUNT=$((COUNT + 1))
+done
+```
+**로그인 성공 기록 cron 설정**
+```
+* * * * * /root/linux_practice/cpu_status.sh
 ```
 
 <br>
