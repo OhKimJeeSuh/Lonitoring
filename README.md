@@ -55,7 +55,7 @@
 
 ### 4-2. 보안 이벤트 모니터링
 - SSH 로그인 실패 기록
-- 리눅스 명령어: grep "Failed password”
+- 리눅스 명령어: grep "Failed password" /var/log/auth.log
 
 <br>
 
