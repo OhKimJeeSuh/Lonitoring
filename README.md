@@ -143,7 +143,7 @@ while true; do
   TODAY=$(date +%y%m%d)
   LOG_FILE="$LOG_DIR/$TODAY.log"
   
-  # 오늘 날짜의 타임스탬프 패턴 (2025-03-18 형식)
+  # 오늘 날짜의 타임스탬프 패턴 (ex : 2025-03-18 형식)
   TODAY_DATE_PATTERN=$(date +"%Y-%m-%d")
   
   # auth.log에서 오늘 날짜의 Failed password 로그만 추출
