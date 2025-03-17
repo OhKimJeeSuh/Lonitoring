@@ -208,7 +208,7 @@ done
 > auth.log에 저장된 “Failed password” 로그를 받아와 로그인 실패 기록만 저장된 새로운 log파일을 생성하는 스크립트
 > - 현재 로그 기록
   ![Image](https://github.com/user-attachments/assets/d533333e-b889-4d4c-82f8-22c6838b37be) <br>
-> - 현 시간보다 뒤의 log 발생 시 기록 → 1분 단위로 모니터링
+> - 현 시간보다 뒤의 log 발생 시 기록 → 1초 단위로 모니터링
   ![Image](https://github.com/user-attachments/assets/25da3d0a-6367-4cb5-bdd4-36fbecd52282) <br>
 > - 추가된 로그 기록
   ![Image](https://github.com/user-attachments/assets/6b4e0901-a9a5-4a89-868e-ad9131b07434) <br>
